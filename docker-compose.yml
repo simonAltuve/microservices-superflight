@@ -1,0 +1,78 @@
+version: "3.7"
+
+services:
+  app:
+    image: simonalt/app_vuelos:v2
+    container_name: app_vuelos
+    env_file: .env
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongodb
+      - rabbitmq
+    restart: always
+    networks:
+      - ms_nestjs
+
+  microservice-flight:
+    image: simonalt/microservice-flight:v2
+    container_name: microservice-flight
+    env_file: .env
+    depends_on:
+      - mongodb
+      - rabbitmq
+    restart: always
+    networks:
+      - ms_nestjs
+
+  microservice-passenger:
+    image: simonalt/microservice-passenger:v2
+    container_name: microservice-passenger
+    env_file: .env
+    depends_on:
+      - mongodb
+      - rabbitmq
+    restart: always
+    networks:
+      - ms_nestjs
+
+  microservice-user:
+    image: simonalt/microservice-user:v2
+    container_name: microservice-user
+    env_file: .env
+    depends_on:
+      - mongodb
+      - rabbitmq
+    restart: always
+    networks:
+      - ms_nestjs
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rmq
+    expose:
+      - 5672
+      - 15672
+    restart: always
+    networks:
+      - ms_nestjs
+  
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - mongodb:/data/db
+    expose:
+      - 27017
+    networks:
+      - ms_nestjs
+    
+volumes:
+  mongodb:
+
+networks:
+  ms_nestjs:
